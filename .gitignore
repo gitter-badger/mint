@@ -1,0 +1,7 @@
+.gitignore
+composer.phar
+composer.lock
+.DS_Store
+.idea/
+vendor/
+tests/

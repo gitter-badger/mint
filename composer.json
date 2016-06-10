@@ -1,0 +1,27 @@
+{
+	"name": "noidhoon/mint",
+	"description": "php micro-framework",
+	"homepage": "http://github.com/Seldaek/monolog",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Sabato Luca Guadagno",
+			"email": "noidhoon@gmail.com",
+			"homepage": "http://noidhoon.org"
+		}
+	],
+	"require": {
+		"php": "^7.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Mint\\": "src/Mint"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Mint\\": "tests/Mint"
+		}
+	}
+}
