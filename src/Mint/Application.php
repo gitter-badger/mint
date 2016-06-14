@@ -5,41 +5,41 @@ namespace Mint;
 class Application
 {
 	public $vars;
-	public $routes;
+	public $route;
 	public $session;
 	public $request;
 	
 	function __construct()
 	{
 		$this -> vars = new Vars();
-		$this -> routes = new \ArrayObject([]);
 		$this -> session = new Session();
 		$this -> request = new Request();
 	}
 	
 	public function get( $uri, $callback )
 	{
-		$route = new Route( 'get', $uri, $callback );
-		$this -> routes[] = $route;
+		$this -> route( 'get', $uri, $callback );
 	}
 	
 	public function post( $uri, $callback )
 	{
-		$route = new Route( 'post', $uri, $callback );
-		$this -> routes[] = $route;
+		$this -> route( 'post', $uri, $callback );
+	}
+
+	private function route( $method, $uri, $callback )
+	{
+		$route = new Route( $method, $uri, $callback );
+		if( $this -> compare( $route, $this -> request ) )
+		{
+			$this -> route = $route;
+			$this -> request -> arguments = $this -> arguments();
+		}
 	}
 	
 	public function run()
 	{
-		/** @var $route Route */
-		foreach( $this -> routes as $route )
-		{
-			if( $this -> compare( $route, $this -> request ) )
-			{
-				ob_start();
-				call_user_func( $route -> callback, $this -> request );
-			}
-		}
+		ob_start();
+		call_user_func( $this -> route -> callback, $this -> request );
 	}
 
 	private function compare( Route $route, Request $request )
@@ -65,15 +65,14 @@ class Application
 			}
 		}
 
-		$request -> arguments = $this -> arguments( $route, $request );
 		return true;
 	}
 
-	private function arguments( Route $route, Request $request )
+	private function arguments()
 	{
 		$arguments = [];
-		$route_uri = array_filter( explode( '/', $route -> uri ) );
-		$request_uri = array_filter( explode( '/', $request -> uri ) );
+		$route_uri = array_filter( explode( '/', $this -> route -> uri ) );
+		$request_uri = array_filter( explode( '/', $this -> request -> uri ) );
 
 		$combine = array_combine( $route_uri, $request_uri );
 		foreach( $combine as $key => $value )
